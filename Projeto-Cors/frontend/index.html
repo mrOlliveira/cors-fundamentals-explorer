@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verificação de CORS</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f6f8;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            color: #333;
+        }
+
+        .painel {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+        }
+
+        h2 { margin-top: 0; color: #2c3e50; }
+        
+        .badge {
+            display: inline-block;
+            background: #e1ecf4;
+            color: #39739d;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            margin-bottom: 20px;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        button:hover { background-color: #2980b9; }
+
+        #display-log {
+            margin-top: 20px;
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 6px;
+            padding: 15px;
+            text-align: left;
+            font-family: monospace;
+            font-size: 0.9rem;
+            min-height: 80px;
+            white-space: pre-wrap;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="painel">
+        <h2>Monitor de API</h2>
+        <span class="badge">Origem: :3000 -> Destino: :8080</span>
+
+        <button onclick="solicitarDados()">🔄 Testar Comunicação</button>
+
+        <div id="display-log">Aguardando início do teste...</div>
+    </div>
+
+    <script>
+        const URL_ALVO = 'http://localhost:8080/dados/info';
+        const display = document.getElementById('display-log');
+
+        async function solicitarDados() {
+            display.innerText = "Enviando requisição HTTP...";
+            display.style.color = "#666";
+            display.style.borderColor = "#dee2e6";
+
+            try {
+                const resposta = await fetch(URL_ALVO);
+
+                if (!resposta.ok) throw new Error(`Status: ${resposta.status}`);
+
+                const dados = await resposta.json();
+
+                display.innerText = "SUCESSO:\n" + JSON.stringify(dados, null, 2);
+                display.style.color = "#27ae60";
+                display.style.borderColor = "#27ae60";
+
+            } catch (err) {
+                console.warn(err);
+                display.innerText = "BLOQUEIO DETECTADO:\nO navegador impediu o acesso à resposta.\nVerifique o console para detalhes de CORS.";
+                display.style.color = "#c0392b";
+                display.style.borderColor = "#c0392b";
+            }
+        }
+    </script>
+</body>
+</html>
